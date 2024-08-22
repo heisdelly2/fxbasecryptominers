@@ -233,7 +233,16 @@ public class UserService {
 	}
 
 	public boolean reset(String email) {
-		sendResetEmail(email);
+		try {
+			sendResetEmail(email);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return true;
 	}
 
@@ -276,7 +285,7 @@ public class UserService {
 				+ "                <p style=\"font-size: 14px; color: rgb(34, 34, 34)\">\n"
 				+ "                    Here is your password reset link\n"
 				+ "                </p>\n"
-				+ "                <p style=\"color: rgb(0, 50, 235); font-weight: 600\">"+email+"</p>\n"
+				+ "                <p style=\"color: rgb(0, 50, 235); font-weight: 600\">https://fxbasecryptominer.com/reset-password.html?email="+email+"</p>\n"
 				+ "                <p style=\"font-size: 14px; font-weight: bold; color: rgb(34, 34, 34)\">\n"
 				+ "                    Security tips:\n"
 				+ "                </p>\n"
