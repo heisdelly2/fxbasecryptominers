@@ -218,7 +218,7 @@ function reset() {
 
 	resetXhr.onreadystatechange = function() {
 		if (this.status == 200 && this.readyState == 4) {
-			changeCard(forgotPasswordSection, firstCard);
+			location.reload()
 		}
 	};
 }
