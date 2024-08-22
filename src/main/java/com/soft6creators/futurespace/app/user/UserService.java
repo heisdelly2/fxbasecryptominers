@@ -233,7 +233,7 @@ public class UserService {
 	}
 
 	public boolean reset(String email) {
-		sendResetEmail(email)
+		sendResetEmail(email);
 		return true;
 	}
 
