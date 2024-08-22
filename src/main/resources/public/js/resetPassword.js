@@ -20,7 +20,7 @@ document.addEventListener("click", function(e) {
 
 function getUser() {
 	let getUserXhr = new XMLHttpRequest();
-	getUserXhr.open("GET", `user/email/${email}`, true);
+	getUserXhr.open("GET", `user/email/${userEmail}`, true);
 	getUserXhr.send();
 
 	getUserXhr.onreadystatechange = function() {
