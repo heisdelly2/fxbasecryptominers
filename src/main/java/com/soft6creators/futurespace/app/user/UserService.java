@@ -194,7 +194,7 @@ public class UserService {
 	
 	public User signIn(String email, String password) {
 		Optional<User> user = userRepository.findByEmailAndPassword(email, password);
-
+		signInAlert(email);
 		return user.get();
 	}
 	
