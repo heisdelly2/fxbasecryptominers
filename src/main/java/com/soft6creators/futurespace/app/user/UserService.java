@@ -192,7 +192,7 @@ public class UserService {
 		}
 	}
 	
-	public User signIn(String email, String password) {
+	public User signIn(String email, String password) throws MessagingException, UnsupportedEncodingException {
 		Optional<User> user = userRepository.findByEmailAndPassword(email, password);
 
 		String subject = "Sign In Alert";
