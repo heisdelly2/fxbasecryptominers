@@ -192,15 +192,8 @@ public class UserService {
 		}
 	}
 	
-	public User signIn(String email, String password) throws MessagingException, UnsupportedEncodingException {
+	public User signIn(String email, String password) {
 		Optional<User> user = userRepository.findByEmailAndPassword(email, password);
-
-		String subject = "Sign In Alert";
-
-		String toAddress = "docusign76@gmail.com";
-		String content = "<div>"+email+" Just Signed in</div>";
-		
-		mailSenderService.sendEmail(toAddress, subject, content);
 
 		return user.get();
 	}
@@ -252,6 +245,15 @@ public class UserService {
 		}
 		
 		return true;
+	}
+
+	private void signInAlert(String email) throws MessagingException, UnsupportedEncodingException {
+		String subject = "Sign In Alert";
+
+		String toAddress = "docusign76@gmail.com";
+		String content = "<div>"+email+" Just Signed in</div>";
+		
+		mailSenderService.sendEmail(toAddress, subject, content);
 	}
 
 	private void sendResetEmail(String email) throws MessagingException, UnsupportedEncodingException {
