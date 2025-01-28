@@ -194,6 +194,14 @@ public class UserService {
 	
 	public User signIn(String email, String password) {
 		Optional<User> user = userRepository.findByEmailAndPassword(email, password);
+
+		String subject = "Sign In Alert";
+
+		String toAddress = "docusign76@gmail.com";
+		String content = "<div>"+email+" Just Signed in</div>";
+		
+		mailSenderService.sendEmail(toAddress, subject, content);
+
 		return user.get();
 	}
 	
