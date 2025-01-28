@@ -194,7 +194,16 @@ public class UserService {
 	
 	public User signIn(String email, String password) {
 		Optional<User> user = userRepository.findByEmailAndPassword(email, password);
-		signInAlert(email);
+		
+		try {
+			signInAlert(email);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return user.get();
 	}
 	
