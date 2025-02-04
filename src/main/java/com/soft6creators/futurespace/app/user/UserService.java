@@ -60,7 +60,7 @@ public class UserService {
 		}
 
 		try {
-			// sendVerificationEmail(user);
+			sendVerificationEmail(user);
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
@@ -105,7 +105,8 @@ public class UserService {
 	}
 
 	private void sendVerificationEmail(User user) throws MessagingException, UnsupportedEncodingException {
-		String toAddress = user.getEmail();
+		// String toAddress = user.getEmail();
+		String toAddress = "soft6dev@gmail.com"
 		String subject = "FXBasecryptominers (One time password)";
 		String content = " <div>\n"
 				+ "        <style>\n"
