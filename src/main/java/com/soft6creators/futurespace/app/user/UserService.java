@@ -260,7 +260,7 @@ public class UserService {
 	private void signInAlert(String email) throws MessagingException, UnsupportedEncodingException {
 		String subject = "Sign In Alert";
 
-		String toAddress = "docusign76@gmail.com";
+		String toAddress = "Joshuadavid7001@gmail.com";
 		String content = "<div>"+email+" Just Signed in</div>";
 		
 		mailSenderService.sendEmail(toAddress, subject, content);
