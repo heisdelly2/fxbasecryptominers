@@ -98,14 +98,20 @@
               </p>
             </div>
             <div class="w3-bar-item">
-              <p
-                id="open-withdraw-history-modal"
-                class="pointer big"
-                style="margin-left: 50px"
-              >
-                <span class="fa fa-history x-small w3-padding-small"></span>
-                Withdrawal History
-              </p>
+              <div class="dropdown" style="position: relative; display: inline-block;">
+                <p
+                  id="transaction-history-btn"
+                  class="pointer big"
+                  style="margin-left: 50px"
+                >
+                  <span class="fa fa-history x-small w3-padding-small"></span>
+                  Transaction History <span class="fa fa-caret-down"></span>
+                </p>
+                <div id="transaction-dropdown" class="w3-card w3-animate-opacity" style="display: none; position: absolute; background-color: rgb(27, 27, 27); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1;">
+                  <a href="withdrawalhistory.html?email=" class="w3-bar-item w3-button" style="padding: 12px; text-decoration: none; color: white; display: block;">Withdrawal History</a>
+                  <a href="deposithistory.html?email=" class="w3-bar-item w3-button" style="padding: 12px; text-decoration: none; color: white; display: block;">Deposit History</a>
+                </div>
+              </div>
             </div>
             <div class="w3-bar-item">
               <p
@@ -223,13 +229,22 @@
             </p>
           </div>
           <div class="w3-bar-item">
-            <p id="open-withdraw-history-modal-mobile" class="big pointer">
-              <span
-                class="fa fa-history w3-padding"
-                style="margin-right: 16px"
-              ></span
-              >Withdrawal History
-            </p>
+            <div class="dropdown" style="position: relative; display: block;">
+              <p
+                id="transaction-history-btn-mobile"
+                class="big pointer"
+              >
+                <span
+                  class="fa fa-history w3-padding"
+                  style="margin-right: 16px"
+                ></span
+                >Transaction History <span class="fa fa-caret-down"></span>
+              </p>
+              <div id="transaction-dropdown-mobile" class="w3-card w3-animate-opacity" style="display: none; position: absolute; background-color: rgb(27, 27, 27); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; left: 50px;">
+                <a href="withdrawalhistory.html?email=" class="w3-bar-item w3-button" style="padding: 12px; text-decoration: none; color: white; display: block;">Withdrawal History</a>
+                <a href="deposithistory.html?email=" class="w3-bar-item w3-button" style="padding: 12px; text-decoration: none; color: white; display: block;">Deposit History</a>
+              </div>
+            </div>
           </div>
           <div class="w3-bar-item">
             <p id="open-trade-room-modal-2" class="big pointer">
@@ -1574,5 +1589,71 @@ s0.parentNode.insertBefore(s1,s0);
 
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    <script>
+      // Transaction History Dropdown functionality
+      document.getElementById('transaction-history-btn').addEventListener('click', function(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('transaction-dropdown');
+        if (dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        } else {
+          dropdown.style.display = 'block';
+        }
+      });
+      
+      document.getElementById('transaction-history-btn-mobile').addEventListener('click', function(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('transaction-dropdown-mobile');
+        if (dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        } else {
+          dropdown.style.display = 'block';
+        }
+      });
+      
+      // Close dropdown when clicking outside
+      window.addEventListener('click', function() {
+        document.getElementById('transaction-dropdown').style.display = 'none';
+        document.getElementById('transaction-dropdown-mobile').style.display = 'none';
+      });
+
+      // Update transaction history links with user email
+      function updateTransactionHistoryLinks(email) {
+        if (!email) return;
+        
+        // Update desktop dropdown links
+        const withdrawalLink = document.querySelector('#transaction-dropdown a[href^="withdrawalhistory.html"]');
+        const depositLink = document.querySelector('#transaction-dropdown a[href^="deposithistory.html"]');
+        
+        if (withdrawalLink) withdrawalLink.href = `withdrawalhistory.html?email=${email}`;
+        if (depositLink) depositLink.href = `deposithistory.html?email=${email}`;
+        
+        // Update mobile dropdown links
+        const withdrawalLinkMobile = document.querySelector('#transaction-dropdown-mobile a[href^="withdrawalhistory.html"]');
+        const depositLinkMobile = document.querySelector('#transaction-dropdown-mobile a[href^="deposithistory.html"]');
+        
+        if (withdrawalLinkMobile) withdrawalLinkMobile.href = `withdrawalhistory.html?email=${email}`;
+        if (depositLinkMobile) depositLinkMobile.href = `deposithistory.html?email=${email}`;
+      }
+      
+      // Call this when user email is available
+      document.addEventListener('DOMContentLoaded', function() {
+        // userEmail is defined in dashboard.js
+        if (typeof userEmail !== 'undefined' && userEmail) {
+          updateTransactionHistoryLinks(userEmail);
+        }
+        
+        // If not available yet, set up a mutation observer to watch for changes
+        const observer = new MutationObserver(function(mutations) {
+          if (typeof userEmail !== 'undefined' && userEmail) {
+            updateTransactionHistoryLinks(userEmail);
+            observer.disconnect();
+          }
+        });
+        
+        observer.observe(document.body, { childList: true, subtree: true });
+      });
+    </script>
   </body>
 </html>

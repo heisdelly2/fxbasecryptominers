@@ -69,7 +69,7 @@ public class WithdrawalService {
 		return withdrawalRepository.findById(withdrawalId);
 	}
 
-	public Optional<Withdrawal> getWithdrawalByUser(String userEmail) {
+	public List<Withdrawal> getWithdrawalByUser(String userEmail) {
 		return withdrawalRepository.findByUserEmail(userEmail);
 	}
 

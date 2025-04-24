@@ -37,8 +37,8 @@ public class WithdrawalController {
 	
 	
 	@CrossOrigin(maxAge = 3600)
-	@RequestMapping("/user/{userEmail}/withdrawal")
-	public Optional<Withdrawal> getWithdrawalByUser(@PathVariable String userEmail) {
+	@RequestMapping("/withdrawal/user/{userEmail}")
+	public List<Withdrawal> getWithdrawalByUser(@PathVariable String userEmail) {
 		return withdrawalService.getWithdrawalByUser(userEmail);
 	}
 	

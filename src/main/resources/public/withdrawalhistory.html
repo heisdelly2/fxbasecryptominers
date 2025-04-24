@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FXBase Crypto Miners - Withdrawal History</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <meta name="theme-color" content="#E6ECF0" />
+    <meta name="msapplication-navbutton-color" content="#E6ECF0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link rel="stylesheet" href="./css/w3.css" />
+    <link rel="stylesheet" href="./css/colors.css" />
+    <link rel="stylesheet" href="./css/dashboard.css" />
+    <link rel="stylesheet" href="./css/fonts.css" />
+    <!-- Latest compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+
+    <script src="./js/moment.js"></script>
+    <div class="gtranslate_wrapper"></div>
+    <script>
+      window.gtranslateSettings = {
+        default_language: "en",
+        native_language_names: true,
+        detect_browser_language: true,
+        wrapper_selector: ".gtranslate_wrapper",
+      };
+    </script>
+    <script
+      src="https://cdn.gtranslate.net/widgets/latest/float.js"
+      defer
+    ></script>
+  <script src="//code.jivosite.com/widget/IeIUF2WNgH" async></script></head>
+  <body style="background-color: black; color: white">
+    <div
+      id="dashboard-spinner"
+      class=""
+      style="
+        display: flex;
+        height: 100vh;
+        position: absolute;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <span
+        class="fa fa-spinner fa-spin w3-jumbo opacity-1"
+        style="color: gold"
+      ></span>
+    </div>
+    <div
+      id="dashboard-container"
+      class="w3-animate-opacity"
+      style="display: none"
+    >
+      <section>
+        <div
+          id="nav"
+          class="w3-bar w3-hide-medium w3-hide-small"
+          style="
+            background-color: black !important;
+            color: white !important;
+            margin: 12px 0px;
+          "
+        >
+          <div class="w3-bar-item" style="margin-top: 12px; width: 18%">
+            <img alt="" src="./images/Untitled-1.png" style="width: 30px" />
+          </div>
+          <div style="padding-top: 12px; padding-left: 0px">
+            <div class="w3-bar-item">
+              <p
+                onclick="window.location.href='dashboard.html'"
+                class="pointer big"
+                style="margin-left: 50px"
+              >
+                <span class="fa fa-dashboard x-small w3-padding-small"></span> Dashboard
+              </p>
+            </div>
+            <div class="w3-bar-item">
+              <div class="dropdown" style="position: relative; display: inline-block;">
+                <p
+                  id="transaction-history-btn"
+                  class="pointer big"
+                  style="margin-left: 50px"
+                >
+                  <span class="fa fa-history x-small w3-padding-small"></span>
+                  Transaction History <span class="fa fa-caret-down"></span>
+                </p>
+                <div id="transaction-dropdown" class="w3-card w3-animate-opacity" style="display: none; position: absolute; background-color: rgb(27, 27, 27); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1;">
+                  <a href="withdrawalhistory.html" class="w3-bar-item w3-button" style="padding: 12px; text-decoration: none; color: gold; display: block;">Withdrawal History</a>
+                  <a href="deposithistory.html" class="w3-bar-item w3-button" style="padding: 12px; text-decoration: none; color: white; display: block;">Deposit History</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w3-bar-item w3-right" style="margin-top: -16px">
+            <div class="w3-padding w3-round pointer">
+              <span
+                class="fa fa-user-circle w3-padding-small"
+                style="font-size: 22px"
+              ></span>
+              <span id="firstname" class="big"></span>
+              <span
+                class="fa fa-angle-down w3-padding-small"
+                style="font-size: 16px"
+              ></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Nav -->
+        <div
+          class="w3-row w3-hide-large"
+          style="
+            padding: 0px 10px 0px 16px;
+            background-color: black !important;
+            margin-top: 8px;
+          "
+        >
+          <div class="w3-col s2" style="margin-top: 5px">
+            <img alt="" src="./images/Untitled-1.png" style="width: 35px" />
+          </div>
+          <div class="w3-col s9">
+            <div
+              class=""
+              style="
+                margin-top: 12px;
+                font-weight: 600;
+                color: rgb(233, 233, 233);
+              "
+            >
+              Welcome <span id="fullname"></span>!
+            </div>
+          </div>
+          <div class="w3-col s1">
+            <div class="">
+              <div
+                id="toggle-nav"
+                class="fa fa-bars large pointer"
+                style="margin-top: -6px; color: white"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="nav-items"
+          class="w3-bar-block opacity-0 w3-hide-large w3-animate-left"
+          style="
+            display: none;
+            background-color: black !important;
+            position: absolute;
+            width: 100%;
+            padding-bottom: 16px;
+            z-index: 100;
+          "
+        >
+          <div class="w3-bar-item">
+            <p onclick="window.location.href='dashboard.html'" class="big pointer">
+              <span
+                class="fa fa-dashboard w3-padding"
+                style="margin-right: 16px"
+              ></span
+              >Dashboard
+            </p>
+          </div>
+          <div class="w3-bar-item">
+            <div class="dropdown" style="position: relative; display: block;">
+              <p
+                id="transaction-history-btn-mobile"
+                class="big pointer"
+              >
+                <span
+                  class="fa fa-history w3-padding"
+                  style="margin-right: 16px"
+                ></span
+                >Transaction History <span class="fa fa-caret-down"></span>
+              </p>
+              <div id="transaction-dropdown-mobile" class="w3-card w3-animate-opacity" style="display: none; position: absolute; background-color: rgb(27, 27, 27); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; left: 50px;">
+                <a href="withdrawalhistory.html" class="w3-bar-item w3-button" style="padding: 12px; text-decoration: none; color: gold; display: block;">Withdrawal History</a>
+                <a href="deposithistory.html" class="w3-bar-item w3-button" style="padding: 12px; text-decoration: none; color: white; display: block;">Deposit History</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Content -->
+      <section>
+        <div style="padding: 30px 16px">
+          <div class="w3-row">
+            <div class="w3-col l12">
+              <h2 style="color: white; font-weight: 600;">Withdrawal History</h2>
+              <p style="color: rgb(200, 200, 200);">View all your withdrawal transactions</p>
+              
+              <div style="background-color: rgb(27, 27, 27); border-radius: 8px; padding: 20px; margin-top: 20px;">
+                <div>
+                  <div id="no-withdrawals-row" style="text-align: center; padding: 30px;">
+                    <i class="fa fa-history" style="font-size: 40px; color: rgb(80, 80, 80); margin-bottom: 15px;"></i>
+                    <p style="color: rgb(150, 150, 150);">You don't have any withdrawal transactions yet</p>
+                  </div>
+                  <div id="withdrawal-history-container">
+                    <!-- Withdrawal cards will be added here dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/66da77e0ea492f34bc0e4a61/1i72m8i0a';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+
+    <script src="./js/navBar.js"></script>
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    <script>
+      // Transaction History Dropdown functionality
+      document.getElementById('transaction-history-btn').addEventListener('click', function(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('transaction-dropdown');
+        if (dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        } else {
+          dropdown.style.display = 'block';
+        }
+      });
+      
+      document.getElementById('transaction-history-btn-mobile').addEventListener('click', function(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('transaction-dropdown-mobile');
+        if (dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        } else {
+          dropdown.style.display = 'block';
+        }
+      });
+      
+      // Close dropdown when clicking outside
+      window.addEventListener('click', function() {
+        document.getElementById('transaction-dropdown').style.display = 'none';
+        document.getElementById('transaction-dropdown-mobile').style.display = 'none';
+      });
+
+      // Get user email from URL parameter
+      let userEmail = new URLSearchParams(window.location.search).get("email");
+      
+      // Show dashboard content when page is loaded
+      window.addEventListener('load', function() {
+        document.getElementById('dashboard-spinner').style.display = 'none';
+        document.getElementById('dashboard-container').style.display = 'block';
+        
+        // If no email parameter, try to redirect back to dashboard
+        if (!userEmail) {
+          console.error("No user email provided in the URL parameters");
+          // Optionally redirect back to dashboard
+          // window.location.href = "dashboard.html";
+          return;
+        }
+        
+        // Get user details to display name
+        let getUserXhr = new XMLHttpRequest();
+        getUserXhr.open("GET", `/user/email/${userEmail}`, true);
+        getUserXhr.send();
+        
+        getUserXhr.onreadystatechange = function () {
+          if (this.status == 200 && this.readyState == 4) {
+            let response = JSON.parse(this.response);
+            
+            // Set user name in the UI
+            let firstName = response.fullName.split(" ", 1);
+            document.getElementById("firstname").innerText = firstName;
+            
+            // Get withdrawal history for this user
+            getWithdrawalHistory(userEmail);
+          }
+        };
+      });
+      
+      // Function to get withdrawal history
+      function getWithdrawalHistory(email) {
+        let withdrawalHistoryXhr = new XMLHttpRequest();
+        withdrawalHistoryXhr.open("GET", `/withdrawal/user/${email}`, true);
+        withdrawalHistoryXhr.send();
+        
+        withdrawalHistoryXhr.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            let withdrawalResponse = JSON.parse(this.response);
+            displayWithdrawalHistory(withdrawalResponse);
+          } else if (this.readyState == 4) {
+            // Handle error or no withdrawals
+            console.error("Failed to retrieve withdrawal history");
+          }
+        };
+      }
+      
+      // Function to display withdrawal history
+      function displayWithdrawalHistory(withdrawals) {
+        const historyContainer = document.getElementById('withdrawal-history-container');
+        const noWithdrawalsRow = document.getElementById('no-withdrawals-row');
+        
+        // If no withdrawals, keep the placeholder row visible
+        if (!withdrawals || withdrawals.length === 0) {
+          return;
+        }
+        
+        // Hide the "no withdrawals" row
+        noWithdrawalsRow.style.display = 'none';
+        
+        // Add each withdrawal as a card
+        withdrawals.forEach(withdrawal => {
+          // Format date
+          const date = new Date(withdrawal.date || withdrawal.createdAt);
+          const formattedDate = date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+          
+          // Create a card for each withdrawal
+          const card = document.createElement('div');
+          card.className = 'w3-card';
+          card.style.backgroundColor = 'rgb(40, 40, 40)';
+          card.style.borderRadius = '8px';
+          card.style.marginBottom = '15px';
+          card.style.padding = '15px';
+          
+          // Create card content
+          card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span style="color: rgb(180, 180, 180); font-size: 14px;">Date</span>
+              <span style="color: white; font-weight: 500;">${formattedDate}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span style="color: rgb(180, 180, 180); font-size: 14px;">Amount</span>
+              <span style="color: white; font-weight: 500;">$${parseFloat(withdrawal.amount).toFixed(2)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span style="color: rgb(180, 180, 180); font-size: 14px;">Currency</span>
+              <span style="color: white; font-weight: 500;">${withdrawal.currency || 'USD'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span style="color: rgb(180, 180, 180); font-size: 14px;">Status</span>
+              <span class="w3-tag w3-round" style="background-color: ${getStatusColor(withdrawal.status)}; color: white; font-size: 12px; padding: 3px 8px;">${withdrawal.status || 'Pending'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <span style="color: rgb(180, 180, 180); font-size: 14px;">Transaction ID</span>
+              <span style="color: white; font-weight: 500; word-break: break-all;">${withdrawal.transactionId || 'Pending'}</span>
+            </div>
+          `;
+          
+          historyContainer.appendChild(card);
+        });
+      }
+      
+      // Helper function to get status color
+      function getStatusColor(status) {
+        switch(status?.toLowerCase()) {
+          case 'completed':
+            return 'green';
+          case 'pending':
+            return 'orange';
+          case 'declined':
+            return 'red';
+          default:
+            return 'grey';
+        }
+      }
+    </script>
+  </body>
+</html> 

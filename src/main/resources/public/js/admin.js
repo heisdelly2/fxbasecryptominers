@@ -1,5 +1,6 @@
 let user = new URLSearchParams(window.location.search).get("email");
 let hasInvestment;
+let currentDeposit = null;
 
 let toUser;
 let account;
@@ -33,6 +34,9 @@ document.body.addEventListener("click", function (e) {
   } else if (target.id == "fund-account") {
     getAllUsers();
     changeOption(target);
+  } else if (target.id == "deposits") {
+    getAllDeposits();
+    changeOption(target);
   } else if (target.id == "pending") {
     getPendingWithdrawals();
     changeOption(target);
@@ -52,6 +56,9 @@ document.body.addEventListener("click", function (e) {
     document.getElementById("trade-modal").style.display = "block";
   } else if (target.id == "close-trade-modal") {
     document.getElementById("trade-modal").style.display = "none";
+  } else if (target.id == "close-deposit-modal") {
+    document.getElementById("deposit-modal").style.display = "none";
+    resetDepositForm();
   } else if (target.id == "update-trade") {
     startTrade();
   } else if (target.classList.contains("user-withdrawal")) {
@@ -63,6 +70,15 @@ document.body.addEventListener("click", function (e) {
     modifyWithdrawal("Successful");
   } else if (target.id == "decline") {
     modifyWithdrawal("Declined");
+  } else if (target.classList.contains("deposit-item")) {
+    let depositId = target.parentElement.parentElement.previousElementSibling.previousElementSibling.value;
+    getDepositDetails(depositId);
+  } else if (target.id == "add-deposit") {
+    createNewDeposit();
+  } else if (target.id == "update-deposit") {
+    updateDeposit();
+  } else if (target.id == "create-deposit-btn") {
+    showCreateDepositModal();
   } else if (target.id == "delete-user") {
     let userToDelete = target.previousElementSibling.value;
     deleteUser(userToDelete);
@@ -496,6 +512,253 @@ function getDeclinedWithdrawals() {
   };
 }
 
+function getAllDeposits() {
+  let depositXhr = new XMLHttpRequest();
+  depositXhr.open("GET", "/deposithistory", true);
+  depositXhr.send();
+
+  depositXhr.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      let response = JSON.parse(this.response);
+      let allDeposits = `
+        <div class="w3-padding w3-center" style="margin: 20px 0;">
+          <div id="create-deposit-btn" class="w3-button w3-green w3-round" style="width: 200px;">
+            <i class="fa fa-plus"></i> Create New Deposit
+          </div>
+        </div>
+      `;
+      
+      if (response && response.length > 0) {
+        for (const deposit of response) {
+          allDeposits += bindDepositStatus(
+            deposit.depositId,
+            deposit.user.email,
+            deposit.user.fullName,
+            deposit.amount,
+            deposit.date || deposit.createdAt,
+            deposit.status,
+            deposit.currency || "USD",
+            deposit.transactionId || "Pending"
+          );
+        }
+      } else {
+        allDeposits += `
+          <div class="w3-padding w3-center w3-light-grey w3-round" style="margin: 20px 8px;">
+            <p class="w3-large">No deposits found in the system</p>
+          </div>
+        `;
+      }
+      
+      distinctMessageRoot.innerHTML = allDeposits;
+    }
+  };
+}
+
+function getDepositDetails(depositId) {
+  let depositDetailsXhr = new XMLHttpRequest();
+  depositDetailsXhr.open("GET", `/deposithistory/${depositId}`, true);
+  depositDetailsXhr.send();
+
+  depositDetailsXhr.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      let depositResponse = JSON.parse(this.response);
+      currentDeposit = depositResponse;
+      
+      // Set deposit action to update
+      document.getElementById("deposit-action").value = "update";
+      document.getElementById("deposit-id").value = depositResponse.depositId;
+      
+      // Populate the deposit form fields
+      document.getElementById("deposit-user-email").value = depositResponse.user.email;
+      document.getElementById("deposit-user-email").disabled = true; // Don't allow email change on update
+      document.getElementById("deposit-amount-etx").value = depositResponse.amount;
+      document.getElementById("deposit-currency").value = depositResponse.currency || "USD";
+      document.getElementById("deposit-tx-id").value = depositResponse.transactionId || "";
+      document.getElementById("deposit-status").value = depositResponse.status || "Pending";
+      
+      // Format and set date
+      const depositDate = new Date(depositResponse.date || depositResponse.createdAt);
+      const formattedDate = depositDate.toISOString().split('T')[0]; // YYYY-MM-DD format for input[type=date]
+      document.getElementById("deposit-date").value = formattedDate;
+      
+      // Show the modal
+      document.getElementById("deposit-modal").style.display = "block";
+      
+      // Hide the add button since we're updating
+      document.getElementById("add-deposit").style.display = "none";
+      document.getElementById("update-deposit").style.display = "block";
+    }
+  };
+}
+
+function showCreateDepositModal() {
+  resetDepositForm();
+  // Show the modal
+  document.getElementById("deposit-modal").style.display = "block";
+  
+  // Show the add button, hide update button
+  document.getElementById("add-deposit").style.display = "block";
+  document.getElementById("update-deposit").style.display = "none";
+}
+
+function resetDepositForm() {
+  // Reset the form to default values
+  document.getElementById("deposit-action").value = "create";
+  document.getElementById("deposit-id").value = "";
+  document.getElementById("deposit-user-email").value = "";
+  document.getElementById("deposit-user-email").disabled = false;
+  document.getElementById("deposit-amount-etx").value = "";
+  document.getElementById("deposit-currency").value = "USD";
+  document.getElementById("deposit-tx-id").value = "";
+  document.getElementById("deposit-status").value = "Pending";
+  
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById("deposit-date").value = today;
+  
+  // Reset current deposit
+  currentDeposit = null;
+}
+
+function createNewDeposit() {
+  const userEmail = document.getElementById("deposit-user-email").value;
+  const amount = document.getElementById("deposit-amount-etx").value;
+  
+  if (!userEmail || !amount) {
+    alert("User email and amount are required");
+    return;
+  }
+  
+  // First get the user details
+  let userXhr = new XMLHttpRequest();
+  userXhr.open("GET", `/user/email/${userEmail}`, true);
+  userXhr.send();
+  
+  userXhr.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        const user = JSON.parse(this.response);
+        
+        // Create deposit object
+        const newDeposit = {
+          amount: parseFloat(amount),
+          currency: document.getElementById("deposit-currency").value,
+          transactionId: document.getElementById("deposit-tx-id").value || generateTransactionId(),
+          status: document.getElementById("deposit-status").value,
+          date: document.getElementById("deposit-date").value,
+          user: { email: userEmail }
+        };
+        
+        // Submit the new deposit to deposithistory endpoint
+        let createDepositXhr = new XMLHttpRequest();
+        createDepositXhr.open("POST", "/deposithistory", true);
+        createDepositXhr.setRequestHeader("Content-Type", "application/json");
+        createDepositXhr.send(JSON.stringify(newDeposit));
+        
+        createDepositXhr.onreadystatechange = function () {
+          if (this.readyState == 4) {
+            if (this.status == 200 || this.status == 201) {
+              document.getElementById("deposit-modal").style.display = "none";
+              resetDepositForm();
+              getAllDeposits();
+            } else {
+              alert("Failed to create deposit. Please try again.");
+            }
+          }
+        };
+      } else {
+        alert("User not found. Please check the email address.");
+      }
+    }
+  };
+}
+
+function updateDeposit() {
+  if (!currentDeposit) {
+    alert("No deposit selected");
+    return;
+  }
+  
+  const depositId = document.getElementById("deposit-id").value;
+  const amount = document.getElementById("deposit-amount-etx").value;
+  
+  if (!depositId || !amount) {
+    alert("Deposit ID and amount are required");
+    return;
+  }
+  
+  // Create deposit update object
+  const depositUpdate = {
+    depositId: depositId,
+    amount: parseFloat(amount),
+    currency: document.getElementById("deposit-currency").value,
+    transactionId: document.getElementById("deposit-tx-id").value,
+    status: document.getElementById("deposit-status").value,
+    date: document.getElementById("deposit-date").value,
+    user: currentDeposit.user
+  };
+  
+  // Submit the deposit update to deposithistory endpoint
+  let updateDepositXhr = new XMLHttpRequest();
+  updateDepositXhr.open("PUT", "/deposithistory", true);
+  updateDepositXhr.setRequestHeader("Content-Type", "application/json");
+  updateDepositXhr.send(JSON.stringify(depositUpdate));
+  
+  updateDepositXhr.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        document.getElementById("deposit-modal").style.display = "none";
+        resetDepositForm();
+        getAllDeposits();
+      } else {
+        alert("Failed to update deposit. Please try again.");
+      }
+    }
+  };
+}
+
+function generateTransactionId() {
+  // Generate a simple transaction ID based on current timestamp
+  return "TX" + Date.now().toString().substring(3);
+}
+
+function bindDepositStatus(depositId, email, fullName, amount, date, status, currency, transactionId) {
+  const statusClass = status?.toLowerCase() === "completed" ? "w3-green" : 
+                     status?.toLowerCase() === "declined" ? "w3-red" : "w3-orange";
+  
+  // Format date
+  const formattedDate = moment(date).format("MMM D, YYYY");
+  
+  return `
+    <div class="message-wrapper">
+      <div class="w3-padding w3-light-grey w3-round" style="margin: 4px 8px">
+        <div class="w3-row">
+          <div class="w3-col s8">
+            <p style="font-weight: 600;">${fullName}</p>
+            <p class="grey-text-2">${email}</p>
+            <p>Amount: $${parseFloat(amount).toFixed(2)} ${currency}</p>
+            <p>Date: ${formattedDate}</p>
+            <p>Transaction ID: ${transactionId}</p>
+            <input type="hidden" value="${depositId}" />
+          </div>
+          <div class="w3-col s4">
+            <div class="w3-right">
+              <span class="w3-tag ${statusClass} w3-round">${status || "Pending"}</span>
+            </div>
+            <div style="margin-top: 28px">
+              <div
+                class="w3-tag w3-blue w3-round w3-right deposit-item pointer"
+              >
+                Edit
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function bindUserInfo(info) {
   return `
 	  <div>
@@ -709,6 +972,8 @@ function bindUserInfo(info) {
                     </div></div>
                     
                   </div> 
+
+                  
                   <div class="w3-margin-top">
                   <input type="hidden" value=${info.addressId} /> 
                   <div id="delete-user" class="w3-padding w3-center w3-border small w3-round w3-hover-none" style="font-weight: 600">Delete User</div>  

@@ -68,6 +68,18 @@
               <div class="w3-col s2">
                 <div class="w3-center pointer" style="margin-top: 8px">
                   <span
+                    id="deposits"
+                    class="fa fa-download grey-text-2 option"
+                    style="font-size: 20px"
+                  >
+                  </span>
+                  <p class="no-margin x-small">Deposits</p>
+                </div>
+              </div>
+
+              <div class="w3-col s2">
+                <div class="w3-center pointer" style="margin-top: 8px">
+                  <span
                     id="pending"
                     class="fa fa-user-plus grey-text-2 option"
                     style="font-size: 20px"
@@ -220,6 +232,91 @@
                 class="w3-button w3-border w3-round w3-hover-none"
               >
                 Update Trade
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="deposit-modal" class="w3-modal" style="display: none">
+        <div
+          class="w3-modal-content w3-round w3-animate-opacity"
+          style="width: 30%; margin-top: 5%"
+        >
+          <div class="w3-padding w3-padding-16">
+            <span
+              id="close-deposit-modal"
+              class="fa fa-times w3-right w3-text-red pointer"
+            ></span>
+          </div>
+          <div class="w3-padding">
+            <p class="large blue-text-dash" style="font-weight: 600">
+              Deposit Management
+            </p>
+            
+            <div class="w3-margin">
+              <p class="small no-margin">User Email</p>
+              <input id="deposit-user-email" class="w3-input" type="email" placeholder="Enter user email" />
+            </div>
+            
+            <div class="w3-margin">
+              <p class="small no-margin">Amount</p>
+              <input id="deposit-amount-etx" class="w3-input" type="number" />
+            </div>
+            
+            <div class="w3-margin">
+              <p class="small no-margin">Currency</p>
+              <select id="deposit-currency" class="w3-input">
+                <option value="BTC">Bitcoin (BTC)</option>
+                <option value="ETH">Ethereum (ETH)</option>
+                <option value="USDT">Tether (USDT)</option>
+                <option value="USD">US Dollar (USD)</option>
+              </select>
+            </div>
+            
+            <div class="w3-margin">
+              <p class="small no-margin">Transaction ID</p>
+              <input id="deposit-tx-id" class="w3-input" type="text" />
+            </div>
+            
+            <div class="w3-margin">
+              <p class="small no-margin">Status</p>
+              <select id="deposit-status" class="w3-input">
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Declined">Declined</option>
+              </select>
+            </div>
+            
+            <div class="w3-margin">
+              <p class="small no-margin">Date</p>
+              <input id="deposit-date" class="w3-input" type="date" />
+            </div>
+            
+            <input type="hidden" id="deposit-id" value="" />
+            <input type="hidden" id="deposit-action" value="create" />
+            
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                margin: 32px 16px;
+              "
+            >
+              <div
+                id="add-deposit"
+                class="w3-button w3-border w3-round w3-hover-none"
+                style="background-color: #4CAF50; color: white;"
+              >
+                Add New Deposit
+              </div>
+              
+              <div
+                id="update-deposit"
+                class="w3-button w3-border w3-round w3-hover-none"
+                style="background-color: #2196F3; color: white;"
+              >
+                Update Deposit
               </div>
             </div>
           </div>
